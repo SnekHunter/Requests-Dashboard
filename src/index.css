@@ -1,0 +1,15 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Small customizations */
+:root{
+  --brand: #0ea5e9;
+}
+
+body{
+  background-image: linear-gradient(180deg, #f8fafc, #ffffff);
+}
+
+/* make the default font a bit nicer (requires the browser to have the font) */
+html,body,#root{height:100%}
