@@ -1,19 +1,36 @@
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { CheckCircleIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 const API_URL = 'http://localhost:8000/api'
 
+interface Request {
+  id: number
+  customer_name: string
+  request_details: string
+  status: 'pending' | 'acknowledged' | 'completed'
+  created_at?: string
+  updated_at?: string
+}
+
+interface NewRequest {
+  customer_name: string
+  request_details: string
+}
+
 export default function App() {
-  const [requests, setRequests] = useState([])
-  const [newRequest, setNewRequest] = useState({ customer_name: '', request_details: '' })
+  const [requests, setRequests] = useState<Request[]>([])
+  const [newRequest, setNewRequest] = useState<NewRequest>({ 
+    customer_name: '', 
+    request_details: '' 
+  })
   const [loading, setLoading] = useState(true)
 
   // Fetch all requests
   const fetchRequests = async () => {
     setLoading(true)
     try {
-      const res = await axios.get(`${API_URL}/requests`)
+      const res = await axios.get<Request[]>(`${API_URL}/requests`)
       setRequests(res.data || [])
     } catch (err) {
       console.error(err)
@@ -23,10 +40,10 @@ export default function App() {
   }
 
   // Create a request
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await axios.post(`${API_URL}/requests`, newRequest)
+      await axios.post<Request>(`${API_URL}/requests`, newRequest)
       setNewRequest({ customer_name: '', request_details: '' })
       fetchRequests()
     } catch (err) {
@@ -35,9 +52,9 @@ export default function App() {
   }
 
   // Update status
-  const updateStatus = async (id, status) => {
+  const updateStatus = async (id: number, status: Request['status']) => {
     try {
-      await axios.put(`${API_URL}/requests/${id}`, { status })
+      await axios.put<Request>(`${API_URL}/requests/${id}`, { status })
       fetchRequests()
     } catch (err) {
       console.error(err)
@@ -93,7 +110,9 @@ export default function App() {
                 onChange={(e) => setNewRequest({ ...newRequest, request_details: e.target.value })}
                 required
               />
-              <button className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700">Submit</button>
+              <button className="w-full bg-sky-600 text-white py-2 rounded hover:bg-sky-700">
+                Submit
+              </button>
             </form>
           </div>
 
